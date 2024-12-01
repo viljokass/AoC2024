@@ -33,7 +33,7 @@ void parse(FILE* fd, int* left, int* right, int size) {
   free(num);
 }
 
-// Returns the index of the smallest unused number
+// Returns the smallest unused number
 int get_smallest_unused(int* data, bool* usage, int size) {
   int smallest_index  = -1;
   int smallest_number = 10e7;
