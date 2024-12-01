@@ -5,11 +5,12 @@
 // Get the size of the input
 int get_number_of_lines(FILE* fd) {
   int size = 0;
-  char dummy[100];
-  while(fgets(dummy, 100, fd)) {
+  char* dummy = malloc(25 * sizeof(char));
+  while(fgets(dummy, 25, fd)) {
     size++;
   }
   rewind(fd);
+  free(dummy);
   return size;
 }
 
