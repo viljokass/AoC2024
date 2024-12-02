@@ -16,33 +16,7 @@ int int_abs(int x) {
 
 // Check a line
 bool is_line_safe(const char* line) {
-  enum direction dir = undef;
-
-  int prev = atoi(line);
-  int curr;
-  for (int i = 0; i < 100; ++i) {
-    if (line[i] == '\n') break;
-    if (line[i] == ' ') {
-      curr = atoi(line + i);
-      if ( dir == undef ) {
-        if ( prev - curr < 0 ) dir = asc;
-        if ( prev - curr > 0 ) dir = desc;
-      }
-      if ( dir == asc ) {
-        if ( prev - curr > 0 )
-          return false; 
-      }
-      if (dir == desc ) {
-        if ( prev - curr < 0 )
-          return false;
-      }
-      if ( prev - curr == 0 )
-        return false; 
-      if ( int_abs( prev - curr ) > 3 )
-        return false;
-      prev = curr;
-    }
-  }
+  // REDO THE LINE CHECKING
   return true;
 }
 
