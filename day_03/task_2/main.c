@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define get_c
-
+// Enum for do or dont or whatever
 enum enable_mul {
   YES,
   NO,
