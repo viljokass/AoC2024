@@ -2,17 +2,19 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-// Enum for do or dont or whatever
+// Macro for checking a char, comparing it to given char and EOF and what is returned if not good.
+#define getcheck(h, i, j) c = getc(fd); if ( c == EOF ) return i; if ( c != h ) return j;
+
+// Enum for do() or don't() or whatever
 enum enable_mul {
-  YES,
-  NO,
-  IDK,
-  ENDOF
+  YES,    // Multiplication enabled
+  NO,     // Multiplication disabled
+  IDK,    // Gone to the multiplication determination branch but then returned without YES or NO
+  ENDOF   // EOF reached
 };
 
 // List of numbers
 const char nums[] = "1234567890";
-
 bool isnum(char c) {
   bool isnum = false;
   for ( int i = 0; i < 10; ++i)
@@ -31,20 +33,10 @@ int handle_m(FILE* fd) {
   char num_r[] = "   ";
   char c;
 
-  // Check u
-  c = getc(fd);
-  if ( c == EOF ) return -1;
-  if ( c != 'u' ) return 0;
-
-  // Check l
-  c = getc(fd);
-  if ( c == EOF ) return -1;
-  if ( c != 'l' ) return 0;
-
-  // Check (
-  c = getc(fd);
-  if ( c == EOF  ) return -1;
-  if ( c != '(' ) return 0;
+  // Check u, l, (
+  getcheck('u', -1, 0);
+  getcheck('l', -1, 0);
+  getcheck('(', -1, 0);
 
   // Check that there's at least 1 number
   c = getc(fd);
@@ -87,53 +79,27 @@ int handle_m(FILE* fd) {
   return atoi(num_l) * atoi(num_r);
 }
 
-// Check if )
-enum enable_mul getdo(FILE* fd) {
-  char c;
-  c = getc(fd);
-  if ( c == EOF ) return ENDOF;
-  if ( c != ')' ) return IDK;
-
-  return YES;
-}
-
-// Check if 't()
-enum enable_mul getdont(FILE* fd) {
-  char c;
-  c = getc(fd);
-  if ( c == EOF ) return ENDOF;
-  if ( c != 39 ) return IDK;
- 
-  c = getc(fd);
-  if ( c == EOF ) return ENDOF;
-  if ( c != 't' ) return IDK;
-
-  c = getc(fd);
-  if ( c == EOF ) return ENDOF;
-  if ( c != '(' ) return IDK;
-
-  c = getc(fd);
-  if ( c == EOF ) return ENDOF;
-  if ( c != ')' ) return IDK;
-
-  return NO;
-}
-
 // if d happens, then do this
-enum enable_mul get_enable(FILE* fd) {
+// If this returns YES, multiplication is allowed
+// If this returns NO, multiplication is not allowed
+// If this returns IDK, state is not changed
+// If this returns ENDOF, EOF has been reached.
+enum enable_mul handle_d(FILE* fd) {
   char c;
-  c = getc(fd);
-  if ( c == EOF ) return ENDOF;
-  if ( c != 'o' ) return IDK;
-
+  getcheck('o', ENDOF, IDK);
   // two ways: do() and don't().
   c = getc(fd);
   if ( c == EOF ) return ENDOF;
   if ( c == 'n' ) {
-    return getdont(fd);
+    getcheck( 39, ENDOF, IDK);
+    getcheck('t', ENDOF, IDK);
+    getcheck('(', ENDOF, IDK);
+    getcheck(')', ENDOF, IDK);
+    return NO;
   }
   if ( c == '(' ) {
-    return getdo(fd);
+    getcheck(')', ENDOF, IDK)
+    return YES;
   }
   return IDK;
 }
@@ -152,8 +118,10 @@ int main(int argc, const char* argv[]) {
   }
  
   // Handle the file.
-  // You know, I probably just could have used regex :D
+  // You know, I probably just could have used regex.
   // Doing things the unneccessarily complicated way...
+  // Basically just passing the file descriptor to different functions
+  // and reading one char at a time to determine the state of the machine.
   int result = 0;
   char c;
   bool enablemul_bool = true;
@@ -161,7 +129,7 @@ int main(int argc, const char* argv[]) {
     c = getc(fd);
     if ( c == EOF ) break;
     if ( c == 'd') {
-      enum enable_mul enable = get_enable(fd);
+      enum enable_mul enable = handle_d(fd);
       if (enable == YES) enablemul_bool = true;
       if (enable == NO ) enablemul_bool = false;
       if (enable == ENDOF) break;
@@ -174,7 +142,8 @@ int main(int argc, const char* argv[]) {
   }
 
   printf("The result is %d\n", result);
-  
+
+  // Close the file.
   fclose(fd);
   return 0;
 }

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#define getcheck(h, i, j) c = getc(fd); if ( c == EOF ) return i; if ( c != h ) return j;
 
 // List of numbers
 const char nums[] = "1234567890";
@@ -24,20 +25,10 @@ int handle_m(FILE* fd) {
   char num_r[] = "   ";
   char c;
 
-  // Check u
-  c = getc(fd);
-  if ( c == EOF ) return -1;
-  if ( c != 'u' ) return 0;
-
-  // Check l
-  c = getc(fd);
-  if ( c == EOF ) return -1;
-  if ( c != 'l' ) return 0;
-
-  // Check (
-  c = getc(fd);
-  if ( c == EOF  ) return -1;
-  if ( c != '(' ) return 0;
+  // Check u, l, (
+  getcheck('u', -1, 0);
+  getcheck('l', -1, 0);
+  getcheck('(', -1, 0);
 
   // Check that there's at least 1 number
   c = getc(fd);
