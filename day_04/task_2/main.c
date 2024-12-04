@@ -1,8 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
+
+#define cd(a, b) (checkdir(data, i, j, rows, columns, a, b, 'M'))
 
 // Count rows from the file
-// Get lines unting EOF is reached
+// Get lines until EOF is reached
 int count_rows(FILE* fd) {
   int rows = 0;
   char buffer[1024];
@@ -13,7 +16,7 @@ int count_rows(FILE* fd) {
 }
 
 // Count columns from the file
-// ( Get a line and count until \n is reached
+// Get a line and count until \n is reached
 int count_cols(FILE* fd) {
   int cols = 0;
   char buffer[1024];
@@ -24,7 +27,7 @@ int count_cols(FILE* fd) {
   return cols;
 }
 
-// Char by char put the file into array allocated above
+// Char by char put the file into array allocated in main
 void parse_array(
   FILE* fd, 
   char* array, 
@@ -50,18 +53,17 @@ int checkdir(
   char what
 ) {
   int new_row     = row + row_dir;
-  int new_column = column + column_dir;
+  int new_column  = column + column_dir;
   if (new_row > max_row - 1 || new_row < 0 ) return 0; // new index out of bounds
   if (new_column > max_column - 1 || new_column < 0) return 0;
   if (data[new_row * max_column + new_column] != what) return 0; // Not what we're looking for
-  if (what == 'S') return 1; // If we've reached S, we've found an complete XMAS
+  if (what == 'S') return 1; // If we've reached S, we've found a complete MAS
   char new_what;
-  if (what == 'M') new_what = 'A';
-  if (what == 'A') new_what = 'S';
+  if (what == 'M') new_what = 'S';
   return checkdir(data, 
                   new_row, new_column, 
                   max_row, max_column, 
-                  row_dir, column_dir, 
+                  -2*row_dir, -2*column_dir, // Jump to the opposite side of A
                   new_what);
 }
 
@@ -70,13 +72,14 @@ int searchXMASes(const char* data, int rows, int columns) {
   int XMASes = 0;
   for (int i = 0; i < rows; ++i) {
     for (int j = 0; j < columns; ++j) {
-      if (data[i * columns + j] == 'X') {
-        for (int dx = -1; dx < 2; ++dx) {
-          for (int dy = -1; dy < 2; ++dy) {
-            // Now that we've encountered X, check if we can find M in X's vicinity in one of eight directions.
-            XMASes += checkdir(data, i, j, rows, columns, dx, dy, 'M');
-          }
-        }
+      if (data[i * columns + j] == 'A') {
+         // Has some overlap but whatever.
+         // IT SEEMS THAT A + IS NOT AN X!
+         int xmas = (cd(-1,-1)&&cd(1,-1)) +
+                    (cd(-1,-1)&&cd(-1,1)) +
+                    (cd(-1,1)&&cd(1,1)) +
+                    (cd(1,-1)&&cd(1,1));
+         XMASes += xmas;
       }
     }
   }
