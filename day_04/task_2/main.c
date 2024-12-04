@@ -73,13 +73,13 @@ int searchXMASes(const char* data, int rows, int columns) {
   for (int i = 0; i < rows; ++i) {
     for (int j = 0; j < columns; ++j) {
       if (data[i * columns + j] == 'A') {
-         // Has some overlap but whatever.
-         // IT SEEMS THAT A + IS NOT AN X!
-         int xmas = (cd(-1,-1)&&cd(1,-1)) +
-                    (cd(-1,-1)&&cd(-1,1)) +
-                    (cd(-1,1)&&cd(1,1)) +
-                    (cd(1,-1)&&cd(1,1));
-         XMASes += xmas;
+        // Has some overlap but whatever.
+        // IT SEEMS THAT A + IS NOT AN X!
+        bool xmas = (cd(-1,-1)&&cd(1,-1)) ||
+                    (cd(-1,-1)&&cd(-1,1)) ||
+                    (cd(-1,1)&&cd(1,1)) ||
+                     (cd(1,-1)&&cd(1,1));
+        if (xmas) XMASes++;
       }
     }
   }
