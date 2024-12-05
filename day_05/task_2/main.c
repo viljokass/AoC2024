@@ -92,10 +92,10 @@ void parse_updates(FILE* fd, update* updates, int updateCount) {
   free(buffer);
 }
 
-// Iterate over each update with each rule, then get the middle number
-// from the valid updates and add them up. The gist of it is that
-// iterating over each update with the rules control the valid-flag
-// and only the valid numbers are considered for the count.
+// First iterate over all updates and switch all invalid updates to false (task 1)
+// Then iterate over all invalid updates, and if there's wrong order, switch the places of the
+// numbers in update, and do that an update's page count times. Very much a brute force approach.
+// Lastly collect all the middle items from the invalid sorted updates.
 int solve(int* rules, int ruleCount, update* updates, int updateCount) {
 
   // Determine the valid updates
@@ -125,11 +125,45 @@ int solve(int* rules, int ruleCount, update* updates, int updateCount) {
     }
   }
 
-  // Get the middle number from each valid update
+
+  // Take the invalid updates and sort them in a brute-forcey manner
+  for (int i = 0; i < updateCount; ++i) {
+    update* currentUpdate = &updates[i];
+    if (!currentUpdate->valid) {
+      int upc = currentUpdate->pageCount;
+      for (int w = 0; w < upc; ++w) {
+        for (int j = 0; j < ruleCount; ++j) {
+          int rule_l = rules[j * 2];
+          int rule_l_index = -1;
+          int rule_r = rules[j * 2 + 1];
+          int rule_r_index = -1;
+
+          for(int k = 0; k < upc; ++k) {
+            if (currentUpdate->pages[k] == rule_l)
+              rule_l_index = k;
+            if (currentUpdate->pages[k] == rule_r)
+              rule_r_index = k;
+          }
+
+          if (rule_l_index != -1 && rule_r_index != -1) {
+            if (rule_l_index > rule_r_index) {
+              // If the order is wrong, switch the places of the pages
+              int tmp = currentUpdate->pages[rule_l_index];
+              currentUpdate->pages[rule_l_index] = currentUpdate->pages[rule_r_index];
+              currentUpdate->pages[rule_r_index] = tmp;
+            }
+          }
+        }
+      }
+    }
+  }
+
+
+  // Get the middle number from each sorted invalid update
   int result = 0;
   for (int i = 0; i < updateCount; ++i) {
     update* currentUpdate = &updates[i];
-    if (currentUpdate->valid) {
+    if (!currentUpdate->valid) {
       int middle = currentUpdate->pages[currentUpdate->pageCount/2];
       result += middle;
     }
@@ -163,7 +197,7 @@ int main(int argc, const char** argv) {
 
   // Now that we have parsed stuff, we can finally get to the actual problem at hand.
   int result = solve(ruleset, ruleCount, updates, updateCount);
-  printf("The sum of the middle numbers of the correctly ordered updates is %d.\n", result);
+  printf("The sum of the middle numbers of the sorted, initially incorrectly ordered updates is %d.\n", result);
 
   // Free the allocated memory.
   for (int i = 0; i < updateCount; ++i) {
