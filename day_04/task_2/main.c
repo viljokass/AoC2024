@@ -67,7 +67,7 @@ int checkdir(
                   new_what);
 }
 
-// For each X in the data, recursively check if XMASes form from going into eight directions.
+// For each A in the data, check if M's or S's are in the vicinity.
 int searchXMASes(const char* data, int rows, int columns) {
   int XMASes = 0;
   for (int i = 0; i < rows; ++i) {
@@ -78,7 +78,7 @@ int searchXMASes(const char* data, int rows, int columns) {
         bool xmas = (cd(-1,-1)&&cd(1,-1)) ||
                     (cd(-1,-1)&&cd(-1,1)) ||
                     (cd(-1,1)&&cd(1,1)) ||
-                     (cd(1,-1)&&cd(1,1));
+                    (cd(1,-1)&&cd(1,1));
         if (xmas) XMASes++;
       }
     }
