@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 // Enum representing grid items.
 typedef enum _gridItem {
   FREE,     // .
@@ -112,22 +111,25 @@ void marcher_func(gridItem* grid, int w, int h, guard* guard_t) {
   guardDir dir = guard_t->dir;
   int x = guard_t->x;
   int y = guard_t->y;
+  // Check if item is out of bounds.
   if (x < 0 || x > (w - 1)) return;
   if (y < 0 || y > (h - 1)) return;
+
+  // Get the direction differences.
   dirEncode diff = getDiffs(dir);
-  if (grid[(y + diff.dy) * w + (x + diff.dx)] == FREE ||
-      grid[(y + diff.dy) * w + (x + diff.dx)] == VISITED) {
-    grid[y * w + x] = VISITED;
-    guard_t->x += diff.dx;
-    guard_t->y += diff.dy;
-    marcher_func(grid, w, h, guard_t);
-    return;
-  }
+  // If next item is TAKEN, turn and do it again.
   if (grid[(y + diff.dy) * w + (x + diff.dx)] == TAKEN) {
     guard_t->dir = next(dir);
     marcher_func(grid, w, h, guard_t);
     return;
-  }
+  } 
+  // Otherwise, move on to the next item in the same direction.
+  // Can be VISITED, FREE, or out of bounds.
+  grid[y * w + x] = VISITED;  // Currently stood on item is visited
+  guard_t->x += diff.dx;      // Set guard position
+  guard_t->y += diff.dy;
+  marcher_func(grid, w, h, guard_t);
+  return;
 }
 
 // Let the guard march
@@ -168,7 +170,21 @@ int main(int argc, const char** argv) {
 
   // Solve
   int unique_locs = solve(grid, w, h, &guard_t);
+
   printf("The guard visited %d unique locations.\n", unique_locs); 
+  /*
+  // For debugging
+  for (int i = 0; i < h; ++i) {
+    for (int j = 0; j < w; ++j) {
+      gridItem item = grid[i * w + j];
+      if (item == FREE) printf(".");
+      if (item == TAKEN) printf("#");
+      if (item == VISITED) printf("X");
+    }
+    printf("\n");
+  }
+  */
+
 
   // Free allocated memory
   free(grid);
