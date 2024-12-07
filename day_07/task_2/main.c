@@ -95,6 +95,7 @@ int main(int argc, const char** argv) {
 
   // Close the file
   fclose(fd);
+  free(buffer);
 
   return 0;
 }
