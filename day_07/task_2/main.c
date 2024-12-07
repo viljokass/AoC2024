@@ -7,7 +7,7 @@ unsigned long long concat(
   unsigned long long lhs,
   unsigned long long rhs
 ) {
-  unsigned long tmp = rhs;
+  unsigned long long tmp = rhs;
   int dc = 0;
   while (tmp != 0) {
     tmp /= 10;
