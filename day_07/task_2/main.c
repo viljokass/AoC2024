@@ -28,11 +28,8 @@ bool solve(
   int currentInd,
   unsigned long long accumulator
 ) {
-  if (currentInd == operandCount - 1) {
-    if (accumulator * operands[currentInd] == output ||
-        accumulator + operands[currentInd] == output ||
-        concat(accumulator, operands[currentInd]) == output) return true;
-    return false;
+  if (currentInd == operandCount) {
+    return accumulator == output;
   }
   return solve(output, operands, operandCount, currentInd + 1, accumulator + operands[currentInd]) ||
          solve(output, operands, operandCount, currentInd + 1, accumulator * operands[currentInd]) ||

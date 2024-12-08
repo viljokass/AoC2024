@@ -72,7 +72,6 @@ void set_antinodes(gridItem* grid, int w, int h) {
       if (base->antenna) {
         for(int m = 0; m < h; ++m) {
           for (int n = 0; n < w; ++n) {
-            // If root and head are the same, move on.
             // The head antenna that we use to calculate the position of the antinode
             gridItem* head = &grid[m * w + n];
             if (head->antenna) {
