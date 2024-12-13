@@ -128,11 +128,11 @@ int solve(unit* p) {
   return price;
 }
 
-// "Stinks like Diophantine equations and
-// linear combinations in here!", I thought
-// to myself, but then thought of a less 
-// elegant solution to this problem.
-// Essentially brute-forceing, yet again.
+// "Stinks like Diophantine equations and/or linear combinations in here!
+// I probably could use Gaussian elimination!", I thought to myself, but 
+// then thought of a less elegant solution to this problem. Essentially 
+// brute-forcing, yet again. I'll see if I get around to something more
+// elegant if I do part 2.
 int main(int argc, const char** argv) {
   if (argc < 2) {
     printf("Please define an input file.\n");
