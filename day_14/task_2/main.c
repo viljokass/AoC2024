@@ -114,11 +114,11 @@ int main(int argc, const char** argv) {
 
   // We can close the file now.
   fclose(fd);
- 
-  print_bots(robots, h, mx, my, 0);
-  int i = 0;
+
   int mx = 101;
   int my = 103;
+  print_bots(robots, h, mx, my, 0);
+  int i = 0;
   // If row 35 has more than thirty items
   int mtt = 0;
   while(1) {
